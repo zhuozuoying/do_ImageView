@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace doUIViewDesign
 {
-    class doImageView : doComponentUIView
+    class do_ImageView : doComponentUIView
     {
         public override void DrawControl(int _x, int _y, int _width, int _height, Graphics g)
         {
