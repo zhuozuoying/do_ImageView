@@ -59,6 +59,7 @@ public class Do_ImageView_View extends ImageView implements DoIUIModuleView, Do_
 	@Override
 	public void setBackgroundColor(int color) {
 		bgColorDrawable = new ColorDrawable(color);
+		this.postInvalidate();
 	}
 
 	@Override
@@ -68,17 +69,20 @@ public class Do_ImageView_View extends ImageView implements DoIUIModuleView, Do_
 		Canvas newCanvas = new Canvas(newBitmap);
 		newCanvas.drawBitmap(bgBitmap, 0, 0, new Paint());
 		if (getDrawable() != null) {
-			Bitmap scaledBitmap = getScaledBitmap();
-			float left = Math.abs(bgBitmap.getWidth() - scaledBitmap.getWidth()) / 2;
-			float top = Math.abs(bgBitmap.getHeight() - scaledBitmap.getHeight()) / 2;
-			newCanvas.drawBitmap(scaledBitmap, left, top, new Paint());
+			Bitmap imageBitmap = ((BitmapDrawable) getDrawable()).getBitmap();
+			if (imageBitmap != null) {
+				Bitmap scaledBitmap = getScaledBitmap(imageBitmap);
+				float left = Math.abs(bgBitmap.getWidth() - scaledBitmap.getWidth()) / 2;
+				float top = Math.abs(bgBitmap.getHeight() - scaledBitmap.getHeight()) / 2;
+				newCanvas.drawBitmap(scaledBitmap, left, top, new Paint());
+			}
 		}
 		newCanvas.save();
 		newCanvas.restore();
 		canvas.drawBitmap(createRadiusBitmap(newBitmap), 0, 0, new Paint());
 	}
 
-	private Bitmap getScaledBitmap() {
+	private Bitmap getScaledBitmap(Bitmap imageBitmap) {
 		// 获取原图真实宽、高
 		Rect rect = getDrawable().getBounds();
 		int dw = rect.width();
@@ -93,7 +97,6 @@ public class Do_ImageView_View extends ImageView implements DoIUIModuleView, Do_
 		// 计算Image在屏幕上实际绘制的宽高
 		int cw = (int) (dw * sx);
 		int ch = (int) (dh * sy);
-		Bitmap imageBitmap = ((BitmapDrawable) getDrawable()).getBitmap();
 		return Bitmap.createScaledBitmap(imageBitmap, cw, ch, true);
 	}
 
@@ -103,6 +106,7 @@ public class Do_ImageView_View extends ImageView implements DoIUIModuleView, Do_
 		}
 		return bitmap;
 	}
+
 
 	@Override
 	public void onClick(View v) {
@@ -137,7 +141,9 @@ public class Do_ImageView_View extends ImageView implements DoIUIModuleView, Do_
 	@Override
 	public void onPropertiesChanged(Map<String, String> _changedValues) {
 		DoUIModuleHelper.handleBasicViewProperChanged(this.model, _changedValues);
-		setRadius(DoTextHelper.strToFloat(_changedValues.get("radius"), 0f));
+		if (_changedValues.containsKey("radius")) {
+			setRadius(DoTextHelper.strToFloat(_changedValues.get("radius"), 0f));
+		}
 		if (_changedValues.containsKey("enabled")) {
 			this.setEnabled(Boolean.parseBoolean(_changedValues.get("enabled")));
 		}
