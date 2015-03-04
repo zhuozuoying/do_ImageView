@@ -106,7 +106,7 @@ public class Do_ImageView_View extends ImageView implements DoIUIModuleView, Do_
 
 	@Override
 	public void onClick(View v) {
-		DoInvokeResult _invokeResult = new DoInvokeResult();
+		DoInvokeResult _invokeResult = new DoInvokeResult(this.model.getUniqueKey());
 		this.model.getEventCenter().fireEvent("touch", _invokeResult);
 	}
 
