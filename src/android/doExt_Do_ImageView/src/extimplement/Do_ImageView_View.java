@@ -97,8 +97,29 @@ public class Do_ImageView_View extends ImageView implements DoIUIModuleView, Do_
 		// 计算Image在屏幕上实际绘制的宽高
 		int cw = (int) (dw * sx);
 		int ch = (int) (dh * sy);
+		if(cw > getWidth() || ch > getHeight()){
+			return createCenterTypeScaledBitmap(imageBitmap, cw, ch);
+		}
 		return Bitmap.createScaledBitmap(imageBitmap, cw, ch, true);
 	}
+	
+	private Bitmap createCenterTypeScaledBitmap(Bitmap bitmap, int cw, int ch){
+		Bitmap centerScaleBitmap = Bitmap.createBitmap(getWidth(), getHeight(),
+				Bitmap.Config.ARGB_8888);
+		Canvas canvas = new Canvas(centerScaleBitmap);
+		Rect src = new Rect();
+		int bx = (cw - getWidth()) / 2;
+		int by = (ch - getHeight()) / 2;
+		bx = bx < 0 ? 0 : bx;
+		by = by < 0 ? 0 : by;
+		src.left = bx;
+		src.top = by;
+		src.right = bx + getWidth();
+		src.bottom = by + getHeight();
+		canvas.drawBitmap(bitmap, src, 
+				new Rect(0, 0, getWidth(), getHeight()), new Paint());
+		return centerScaleBitmap;
+	} 
 
 	private Bitmap createRadiusBitmap(Bitmap bitmap) {
 		if (this.radius > 0f) {
